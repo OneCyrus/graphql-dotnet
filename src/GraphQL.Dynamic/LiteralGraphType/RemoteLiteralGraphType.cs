@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Emit;
 using System.IO;
+using System.Text;
 
 namespace GraphQL.Dynamic.Types.LiteralGraphType
 {
@@ -409,7 +410,7 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                     Query = SchemaIntrospection.IntrospectionQuery
                 };
 
-                var response = client.PostAsync(new Uri(url), new StringContent(JsonConvert.SerializeObject(query)))
+                var response = client.PostAsync(new Uri(url), new StringContent(JsonConvert.SerializeObject(query), Encoding.UTF8, "application/json"))
                     .ConfigureAwait(false)
                     .GetAwaiter()
                     .GetResult();

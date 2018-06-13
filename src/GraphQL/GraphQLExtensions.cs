@@ -82,7 +82,8 @@ namespace GraphQL
                 }
             }
 
-            return resolve(type) ??
+            var temp = resolve(type);
+            return temp ??
                    throw new InvalidOperationException(
                        $"Expected non-null value, {nameof(resolve)} delegate return null for \"${type}\"");
         }
