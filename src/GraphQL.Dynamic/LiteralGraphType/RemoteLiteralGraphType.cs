@@ -59,7 +59,7 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                     throw new Exception($"Failed to find type '{_name}' in remote '{_remoteLocation}' schema");
                 }
 
-                Name = $"{_remoteLocation}.{_name}";
+                Name = $"{_name}";
 
                 if (!_hasAddedFields)
                 {
@@ -161,25 +161,38 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                                     );
 
                                 EmitResult emitResult;
-
-                                using (var ms = new MemoryStream())
+                                Type foundType = null;
+                                foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
                                 {
-                                    emitResult = compilation.Emit(ms);
-                                    if (emitResult.Success)
+                                    foundType = a.GetType(typeName);
+                                    if (foundType != null)
                                     {
-                                        var assembly = Assembly.Load(ms.GetBuffer());
-
-                                        var dependencies = DependencyContext.Load(assembly);
-                                        
-                                        return assembly.GetType(typeName);
-                                    } else
-                                    {
-                                        foreach (var error in emitResult.Diagnostics)
-                                            Debug.WriteLine(error.GetMessage());
+                                        break;
                                     }
                                 }
 
-                                return null;
+                                if (foundType == null)
+                                {
+                                    using (var ms = new MemoryStream())
+                                    {
+                                        emitResult = compilation.Emit(ms);
+                                        if (emitResult.Success)
+                                        {
+                                            var assembly = Assembly.Load(ms.GetBuffer());
+
+                                            var dependencies = DependencyContext.Load(assembly);
+
+                                            return assembly.GetType(typeName);
+                                        }
+                                        else
+                                        {
+                                            foreach (var error in emitResult.Diagnostics)
+                                                Debug.WriteLine(error.GetMessage());
+                                        }
+                                    }
+                                }
+
+                                return foundType;
                             })
                             .ToList();
 
