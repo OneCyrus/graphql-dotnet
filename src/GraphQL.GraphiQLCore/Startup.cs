@@ -1,3 +1,4 @@
+using GraphQL.Dynamic.Types.LiteralGraphType;
 using GraphQL.Http;
 using GraphQL.StarWars;
 using GraphQL.StarWars.Types;
@@ -16,6 +17,23 @@ namespace GraphQL.GraphiQLCore
         {
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<IDocumentWriter, DocumentWriter>();
+
+            var moniker = "customerTemp";
+
+            var remotes = new[]
+            {
+                new RemoteDescriptor
+                {
+                    Moniker = moniker,
+                    Url = "https://api.giacloud.ch/api/graphql"
+                }
+            };
+
+            var remoteTypes = RemoteLiteralGraphType.LoadRemotes(remotes).GetAwaiter().GetResult();
+            foreach(var type in remoteTypes)
+            {
+                services.AddSingleton(type);
+            }
 
             services.AddSingleton<StarWarsData>();
             services.AddSingleton<StarWarsQuery>();

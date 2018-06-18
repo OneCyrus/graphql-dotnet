@@ -16,6 +16,7 @@ using System.Diagnostics;
 using Microsoft.CodeAnalysis.Emit;
 using System.IO;
 using System.Text;
+using Microsoft.Extensions.DependencyModel;
 
 namespace GraphQL.Dynamic.Types.LiteralGraphType
 {
@@ -151,7 +152,9 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                                 referenceAssemblies.Add(MetadataReference.CreateFromFile(typeof(ObjectGraphType).Assembly.Location));
                                 referenceAssemblies.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
 
-                                var compilation = CSharpCompilation.Create($"GraphQL.Dynamic.RemoteLiteralGraphTypes.{typeName}-{Guid.NewGuid().ToString("N")}",
+                                // var assemblyName = $"GraphQL.Dynamic.RemoteLiteralGraphTypes.{typeName}-{Guid.NewGuid().ToString("N")}";
+                                var assemblyName = $"GraphQL.Dynamic.RemoteLiteralGraphTypes.{typeName}";
+                                var compilation = CSharpCompilation.Create(assemblyName,
                                     options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                                     syntaxTrees: new[] { CSharpSyntaxTree.ParseText(syntaxFactory.NormalizeWhitespace().ToFullString()) },
                                     references: referenceAssemblies
@@ -165,6 +168,9 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                                     if (emitResult.Success)
                                     {
                                         var assembly = Assembly.Load(ms.GetBuffer());
+
+                                        var dependencies = DependencyContext.Load(assembly);
+                                        
                                         return assembly.GetType(typeName);
                                     } else
                                     {
