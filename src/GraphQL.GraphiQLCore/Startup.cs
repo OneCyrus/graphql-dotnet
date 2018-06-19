@@ -18,19 +18,19 @@ namespace GraphQL.GraphiQLCore
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<IDocumentWriter, DocumentWriter>();
 
-            var moniker = "customerTemp";
+            var moniker = "cmdbServer";
 
             var remotes = new[]
             {
                 new RemoteDescriptor
                 {
                     Moniker = moniker,
-                    Url = "https://api.giacloud.ch/api/graphql"
+                    Url = "https://cmdb-qs.webservices.gclsintra.net/graphql"
                 }
             };
 
             var remoteTypes = RemoteLiteralGraphType.LoadRemotes(remotes).GetAwaiter().GetResult();
-            foreach(var type in remoteTypes)
+            refactoringforeach(var type in remoteTypes)
             {
                 services.AddSingleton(type);
             }

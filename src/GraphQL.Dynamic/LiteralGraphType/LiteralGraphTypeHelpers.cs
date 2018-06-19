@@ -38,6 +38,7 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
             PopulateTypeMapping(LiteralGraphTypeMemberInfoType.Boolean, typeof(bool), CreateFieldType<BooleanGraphType>);
             PopulateTypeMapping(LiteralGraphTypeMemberInfoType.Guid, typeof(Guid), CreateFieldType<IdGraphType>);
             PopulateTypeMapping(LiteralGraphTypeMemberInfoType.DateTimeOffset, typeof(DateTimeOffset), CreateFieldType<DateGraphType>);
+            PopulateTypeMapping(LiteralGraphTypeMemberInfoType.DateTime, typeof(DateTime), CreateFieldType<DateGraphType>);
         }
 
         internal static string MakeMemberFieldTypeResolverMapKey(LiteralGraphTypeMemberInfo member) => $"{member.DeclaringTypeName}.{member.Name}";

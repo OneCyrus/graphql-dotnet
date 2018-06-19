@@ -36,21 +36,21 @@ namespace GraphQL.StarWars
                 resolve: func
             );
 
-            var moniker = "customerTemp";
+            var moniker = "cmdbServer";
 
             var remotes = new[]
             {
                 new RemoteDescriptor
                 {
                     Moniker = moniker,
-                    Url = "https://api.giacloud.ch/api/graphql"
+                    Url = "https://cmdb-qs.webservices.gclsintra.net/graphql" //"https://api.giacloud.ch/api/graphql"
                 }
             };
 
             var remoteTypes = RemoteLiteralGraphType.LoadRemotes(remotes).GetAwaiter().GetResult();
 
             //GiaInfrastructureServiceType
-            this.RemoteField(remoteTypes, moniker, "GiaCustomerType", "customer", resolve: ctx =>
+            this.RemoteField(remoteTypes, moniker, "ServerType", "cmdbServer", resolve: ctx =>
             {
                 Debug.WriteLine(ctx.Document);
                 return JObject.Parse(
