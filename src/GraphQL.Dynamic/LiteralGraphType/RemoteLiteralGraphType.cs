@@ -60,7 +60,7 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                 }
 
                 Name = $"{_name}";
-
+                
                 if (!_hasAddedFields)
                 {
                     var fields = GetFieldsForFieldType(_remoteLocation, type).Where(f => f != null).ToList();
@@ -90,9 +90,6 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
             {
                 remoteSchemaFetcher = FetchRemoteSchemaViaHttp;
             }
-
-            var parentConstructor = typeof(RemoteLiteralGraphType).GetConstructor(new[] { typeof(string), typeof(string) });
-            var metadataAttributeConstructor = typeof(RemoteLiteralGraphTypeMetadataAttribute).GetConstructor(new[] { typeof(string), typeof(string), typeof(string) });
 
             // Convert each remote into a new assembly asynchronously
             var tasks = remotes
@@ -262,7 +259,6 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                 }
             }
         }
-
 
         private static IEnumerable<FieldType> GetFieldsForFieldType(string remote, Introspection.TypeElement parentField)
         {

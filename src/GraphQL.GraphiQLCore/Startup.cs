@@ -30,7 +30,7 @@ namespace GraphQL.GraphiQLCore
             };
 
             var remoteTypes = RemoteLiteralGraphType.LoadRemotes(remotes).GetAwaiter().GetResult();
-            refactoringforeach(var type in remoteTypes)
+            foreach(var type in remoteTypes)
             {
                 services.AddSingleton(type);
             }
