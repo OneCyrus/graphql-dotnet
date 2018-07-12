@@ -1,4 +1,5 @@
 using Example;
+using GraphQL.Dynamic.Types.LiteralGraphType;
 using GraphQL.Http;
 using GraphQL.StarWars;
 using GraphQL.StarWars.Types;
@@ -30,6 +31,23 @@ namespace GraphQL.Harness
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<IDocumentWriter, DocumentWriter>();
 
+            var moniker = "cmdbServer";
+
+            var remotes = new[]
+            {
+                new RemoteDescriptor
+                {
+                    Moniker = moniker,
+                    Url = "https://cmdb-qs.webservices.gclsintra.net/graphql"
+                }
+            };
+
+            var remoteTypes = RemoteLiteralGraphType.LoadRemotes(remotes).GetAwaiter().GetResult();
+            foreach (var type in remoteTypes)
+            {
+                services.AddSingleton(type);
+            }
+
             services.AddSingleton<StarWarsData>();
             services.AddSingleton<StarWarsQuery>();
             services.AddSingleton<StarWarsMutation>();
@@ -60,6 +78,7 @@ namespace GraphQL.Harness
 
             app.UseMiddleware<GraphQLMiddleware>(new GraphQLSettings
             {
+                Path = "/api/graphql",
                 BuildUserContext = ctx => new GraphQLUserContext
                 {
                     User = ctx.User

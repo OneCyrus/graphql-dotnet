@@ -48,7 +48,7 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
 
         internal static Type GetPrimitiveGraphType(string name) => _graphTypesLookup[name]?.GetType();
 
-        internal static string GenerateRemoteTypeName(string remoteLocation, string name) => SanitizeTypeNameRegex.Replace($"{remoteLocation}.{name}", "_");
+        internal static string GenerateRemoteTypeName(string remoteLocation, string name) => SanitizeTypeNameRegex.Replace($"{name}", "_");
 
         internal static string MakeMemberFieldTypeResolverMapKey(LiteralGraphTypeMemberInfo member) => $"{member.DeclaringTypeName}.{member.Name}";
 

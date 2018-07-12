@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GraphQL.Dynamic.Types.Introspection;
 using GraphQL.Introspection;
+using GraphQL.Resolvers;
 using GraphQL.Types;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -60,14 +61,20 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                     throw new Exception($"Failed to find type '{_name}' in remote '{_remoteLocation}' schema");
                 }
 
-                Name = LiteralGraphTypeHelpers.GenerateRemoteTypeName(_remoteLocation, _name);
+                Name = LiteralGraphTypeHelpers.GenerateRemoteTypeName("", _name);
 
                 if (!_hasAddedFields)
                 {
                     var fields = GetFieldsForFieldType(_remoteLocation, type)?.Where(f => f != null).ToArray();
+
+                    AddField(new FieldType() { Name = "Whatever", Type = typeof(StringGraphType), Resolver = new FuncFieldResolver<dynamic, object>(te => {
+                        return ""; } ) });
                     foreach (var field in fields ?? new FieldType[] { })
                     {
-                        AddField(field);
+                        if (field.Type != null)  // TODO: just for PoC. Some types will be missed (e.g. UNION)
+                        {
+                            AddField(field);
+                        }
                     }
 
                     _hasAddedFields = true;
@@ -294,7 +301,7 @@ namespace GraphQL.Dynamic.Types.LiteralGraphType
                     };
                 })
                 // TODO: handle unresolvable types (I'm looking at you UNION)
-                .Where(member => member.Type != LiteralGraphTypeMemberInfoType.Unknown)
+                .Where(member => member.Type != LiteralGraphTypeMemberInfoType.Unknown && member.TypeName != null)
                 .Select(member => LiteralGraphTypeHelpers.GetFieldTypeForMember(member, ComplexFieldTypeResolver))
                 .ToList();
 

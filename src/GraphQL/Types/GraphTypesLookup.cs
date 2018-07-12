@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GraphQL.Conversion;
@@ -102,6 +102,7 @@ namespace GraphQL.Types
             {
                 if (string.IsNullOrWhiteSpace(typeName))
                 {
+                    return null;
                     throw new ArgumentOutOfRangeException(nameof(typeName), "A type name is required to lookup.");
                 }
 
